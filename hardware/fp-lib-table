@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "CONTROLER")(type "KiCad")(uri "${KIPRJMOD}/simbol_and_footprint_lib/CONTROLER.pretty")(options "")(descr ""))
+)

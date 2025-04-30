@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "controler")(type "KiCad")(uri "${KIPRJMOD}/simbol_and_footprint_lib/controler.kicad_sym")(options "")(descr ""))
+)
