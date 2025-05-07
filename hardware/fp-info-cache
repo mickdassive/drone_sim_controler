@@ -1,4 +1,4 @@
-25226281851234277
+25233266048788628
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -2666,6 +2666,34 @@ PS4_joystick
 0
 14
 11
+CONTROLER
+TPS63031DSKR
+
+TPS63031DSKR 
+0
+13
+12
+CONTROLER
+cx3225sa_e
+
+
+0
+4
+4
+CONTROLER
+hex
+
+
+0
+0
+0
+CONTROLER
+usb4500
+
+
+0
+16
+13
 Calibration_Scale
 Gauge_10mm_Type1_CopperTop
 Gauge, Massstab, 10mm, CopperTop, Type 1,
