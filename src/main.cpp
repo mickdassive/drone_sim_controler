@@ -1,18 +1,50 @@
-#include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#include <Arduino.h>
+#include <Adafruit_TinyUSB.h>
+#include "io.h"
+#include "debug.h"
+#include "tusb.h"
+#include "usb.h"
+
+
+
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  //init serail
+  HardwareSerial Serial1(1);
+  Serial1.begin(115200, SERIAL_8N1, 34, 33);
+
+  //init io
+  debug_msg(partal_io, "starting io init", false, 0);
+  io_gpio_init();
+
+  //jtag setup
+  debug_msg(partal_io, "starting jtag init", false, 0);
+  //free up jtag pins
+  gpio_reset_pin(GPIO_NUM_39); //tck
+  gpio_reset_pin(GPIO_NUM_40); //tdo
+  gpio_reset_pin(GPIO_NUM_41); //tdi
+  gpio_reset_pin(GPIO_NUM_42); //tms
+
+  //init usb
+  debug_msg(partal_io, "starting usb init", false, 0);
+  tusb_rhport_init_t dev_init = {
+    .role = TUSB_ROLE_DEVICE,
+    .speed = TUSB_SPEED_AUTO
+  };
+  tusb_init(BOARD_TUD_RHPORT, &dev_init);
+
+  
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+  //read gamepad data
+  io_read_gamepad_data();
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  //send gamepad data
+  usb_send_gamepad_data(current_gamepad_data.ls_x, current_gamepad_data.ls_y, current_gamepad_data.rs_x, current_gamepad_data.rs_y, current_gamepad_data.buttons);
+
+  //run usb task
+  tud_task();  
 }
