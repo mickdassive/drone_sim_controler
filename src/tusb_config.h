@@ -50,11 +50,9 @@
 
 // defined by compiler flags for flexibility
 #ifndef CFG_TUSB_MCU
-#define CFG_TUSB_MCU           OPT_MCU_YOUR_MICROCONTROLLER
+#error CFG_TUSB_MCU must be defined
 #endif
-#if !defined(CFG_TUSB_MCU) || (CFG_TUSB_MCU != OPT_MCU_ESP32S2 && CFG_TUSB_MCU != OPT_MCU_ESP32S3)
-#error "CFG_TUSB_MCU must be defined as OPT_MCU_ESP32S2 or OPT_MCU_ESP32S3 for ESP32."
-#endif
+
 #ifndef CFG_TUSB_OS
 #define CFG_TUSB_OS           OPT_OS_NONE
 #endif

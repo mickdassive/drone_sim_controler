@@ -23,7 +23,6 @@
  *
  */
 
-
  #include "tusb.h"
   
  /* A combination of interfaces must have a unique product id, since PC will save device driver after the first plug.
@@ -73,6 +72,12 @@
  //--------------------------------------------------------------------+
  // HID Report Descriptor
  //--------------------------------------------------------------------+
+
+
+  uint8_t const desc_hid_gamepad[] = 
+  {
+    TUD_HID_REPORT_DESC_GAMEPAD()
+  };
  
  // HID Report Descriptor for Gamepad
  // Invoked when received GET HID REPORT DESCRIPTOR
@@ -81,7 +86,7 @@
  uint8_t const * tud_hid_descriptor_report_cb(uint8_t instance)
  {
    (void) instance;
-   return TUD_HID_REPORT_DESC_GAMEPAD(HID_REPORT_ID(5));
+   return desc_hid_gamepad;
  }
  
  //--------------------------------------------------------------------+
@@ -104,7 +109,7 @@
    TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
  
    // Interface number, string index, protocol, report descriptor len, EP In address, size & polling interval
-   TUD_HID_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(TUD_HID_REPORT_DESC_GAMEPAD(HID_REPORT_ID(5))), EPNUM_HID, CFG_TUD_HID_EP_BUFSIZE, 5)
+   TUD_HID_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_gamepad), EPNUM_HID, CFG_TUD_HID_EP_BUFSIZE, 5)
  };
  
  #if TUD_OPT_HIGH_SPEED
@@ -226,3 +231,6 @@
  
    return _desc_str;
  }
+
+ #define dcd_edpt_iso_alloc 0
+
