@@ -92,7 +92,12 @@ void usb_tasks () {
 
     // not enumerated()/mounted() yet: nothing to do
     if (!TinyUSBDevice.mounted()) {
-    return;
+        digitalWrite(led_r.pin_number, !digitalRead(led_r.pin_number));
+        delay(500);
+        return;
+    } else {
+        digitalWrite(led_r.pin_number, LOW);
+        digitalWrite(led_g.pin_number, HIGH);
     }
 
     if (!usb_hid.ready()) return;
