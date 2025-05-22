@@ -1,13 +1,13 @@
 
 
-#ifndef debug_cpp
-#define debug_cpp
+#ifndef DEBUG_cpp
+#define DEBUG_cpp
 
 #include <Arduino.h>
-#include "debug.h"
+#include "DEBUG.h"
 
 //var defines
-enum debug_levels debug_level = no_debug;
+enum DEBUG_LEVELS debug_level = DEBUG_NO_DEBUG;
 
 //functions
 
@@ -22,10 +22,10 @@ enum debug_levels debug_level = no_debug;
  * @param include_num Flag indicating whether to include an attached value.
  * @param num_include The attached value to be printed (if include_num is true).
  */
-void debug_msg(enum debug_levels message_debug_level, const char* debug_message, bool include_num, int num_include) {
-    if (debug_level != no_debug) {
+void debug_msg(enum DEBUG_LEVELS message_debug_level, const char* debug_message, bool include_num, int num_include) {
+    if (debug_level != DEBUG_NO_DEBUG) {
         switch (message_debug_level) {
-            case full:
+            case DEBUG_FULL:
                 Serial.print("debug msg at millis: ");
                 Serial.print(millis());
                 Serial.print("| ");
@@ -37,7 +37,7 @@ void debug_msg(enum debug_levels message_debug_level, const char* debug_message,
                     Serial.println(debug_message);
                 }
                 break;
-            case partal_io:
+            case DEBUG_PARTIAL_IO:
                 Serial.print("debug msg at millis: ");
                 Serial.print(millis());
                 Serial.print("| ");
@@ -49,7 +49,7 @@ void debug_msg(enum debug_levels message_debug_level, const char* debug_message,
                     Serial.println(debug_message);
                 }
                 break;
-            case partal_usb:
+            case DEBUG_PARTIAL_USB:
                 Serial.print("debug msg at millis: ");
                 Serial.print(millis());
                 Serial.print("| ");
@@ -61,16 +61,16 @@ void debug_msg(enum debug_levels message_debug_level, const char* debug_message,
                     Serial.println(debug_message);
                 }
                 break;
-            case no_debug:
+            case DEBUG_NO_DEBUG:
                 break;
         }
     }
 }
 
-void debug_level_set(enum debug_levels new_debug_level) {
+void debug_level_set(enum DEBUG_LEVELS new_debug_level) {
     debug_level = new_debug_level;
 }
 
 
 
-#endif // debug_cpp
+#endif // DEBUG_cpp

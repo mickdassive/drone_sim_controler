@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "io.h"
-#include "debug.h"
+#include "DEBUG.h"
 
 //vars
 bool io_interrupt_flag = false;
@@ -38,7 +38,7 @@ struct controler_data current_gamepad_data;
  */
 void io_gpio_init() {
 
-    debug_msg(partal_io, "io_gpio_init called, setting up pins", false, 0);
+    debug_msg(DEBUG_PARTIAL_IO, "io_gpio_init called, setting up pins", false, 0);
   
     //begin iterating through pins
     for (size_t i = 1; i < sizeof(pin_names[0]); i++) {
@@ -46,7 +46,7 @@ void io_gpio_init() {
       switch (pin_names[i]->pin_mode) {
       default:
         // Error handling for unexpected pin_mode value
-        debug_msg(partal_io, "Unexpected pin_mode value", false, 0);
+        debug_msg(DEBUG_PARTIAL_IO, "Unexpected pin_mode value", false, 0);
         break;
       case in:
         pinMode(pin_names[i]->pin_number, INPUT);
@@ -68,72 +68,48 @@ void io_gpio_init() {
       }  
     }
   
-    debug_msg(partal_io, "pins have been initialized", false, 0);
+    debug_msg(DEBUG_PARTIAL_IO, "pins have been initialized", false, 0);
   
     return;
   };
 
 
-/**
- * @brief Reads gamepad input data from analog and digital pins, processes it, 
- *        and updates the current gamepad data structure.
- * 
- * This function performs the following steps:
- * 1. Initializes local variables to store the current state of gamepad inputs.
- * 2. Reads analog values for the left and right sticks (X and Y axes) and 
- *    digital values for buttons and stick switches from their respective pins.
- * 3. Maps the analog stick values from the range [0, 4095] to [-2000, 2000].
- * 4. Packs the digital button states into a single 32-bit variable.
- * 5. Updates the global gamepad data structure with the processed input values.
- * 
- * @note This function assumes the existence of global variables for pin 
- *       configurations and the gamepad data structure.
- */
-void io_read_gamepad_data() {
 
-  debug_msg(partal_io, "io_read_gamepad_data called", false, 0);
+/**
+ * @brief Reads the current state of the gamepad inputs and returns the data.
+ *
+ * This function reads analog values from the left and right stick axes, as well as digital values from multiple buttons and switches.
+ * The analog stick values are mapped from their raw range (0-4095) to a normalized range (-2000 to 2000).
+ * Button and switch states are combined into a single integer using bitwise operations.
+ *
+ * @return controler_data A struct containing the current state of all gamepad controls.
+ */
+struct controler_data io_read_gamepad_data() {
+
+  debug_msg(DEBUG_PARTIAL_IO, "io_read_gamepad_data called", false, 0);
 
     //init loca vars
-    int16_t curent_ls_x = 0;
-    int16_t curent_ls_y = 0;
-    int16_t curent_rs_x = 0;
-    int16_t curent_rs_y = 0;
-    bool curent_btn_1 = false;
-    bool curent_btn_2 = false;
-    bool curent_ls_sw = false;
-    bool curent_rs_sw = false;
-    uint32_t curent_buttons = 0;
+    struct controler_data current_gamepad_data;
+    
 
     //start reading pins
-    curent_ls_x = analogRead(ls_x.pin_number);
-    curent_ls_y = analogRead(ls_y.pin_number);
-    curent_rs_x = analogRead(rs_x.pin_number);
-    curent_rs_y = analogRead(rs_y.pin_number);
-    curent_btn_1 = digitalRead(btn_1.pin_number);
-    curent_btn_2 = digitalRead(btn_2.pin_number);
-    curent_ls_sw = digitalRead(ls_sw.pin_number);
-    curent_rs_sw = digitalRead(rs_sw.pin_number);
+    current_gamepad_data.ls_x = analogRead(ls_x.pin_number);
+    current_gamepad_data.ls_y = analogRead(ls_y.pin_number);
+    current_gamepad_data.rs_x = analogRead(rs_x.pin_number);
+    current_gamepad_data.rs_y = analogRead(rs_y.pin_number);
+    current_gamepad_data.buttons = digitalRead(btn_1.pin_number);
+    current_gamepad_data.buttons = ((digitalRead(btn_2.pin_number) << 1) | current_gamepad_data.buttons);
+    current_gamepad_data.buttons = ((digitalRead(ls_sw.pin_number) << 2) | current_gamepad_data.buttons);
+    current_gamepad_data.buttons = ((digitalRead(rs_sw.pin_number) << 3) | current_gamepad_data.buttons);
+
 
     //re bound analogue to +- 2000
-    curent_ls_x = map(curent_ls_x, 0, 4095, -2000, 2000);
-    curent_ls_y = map(curent_ls_y, 0, 4095, -2000, 2000);
-    curent_rs_x = map(curent_rs_x, 0, 4095, -2000, 2000);
-    curent_rs_y = map(curent_rs_y, 0, 4095, -2000, 2000);
+    current_gamepad_data.ls_x = map(current_gamepad_data.ls_x, 0, 4095, -2000, 2000);
+    current_gamepad_data.ls_y = map(current_gamepad_data.ls_y, 0, 4095, -2000, 2000);
+    current_gamepad_data.rs_x = map(current_gamepad_data.rs_x, 0, 4095, -2000, 2000);
+    current_gamepad_data.rs_y = map(current_gamepad_data.rs_y, 0, 4095, -2000, 2000);
 
-    //move buttions into buttion var
-    curent_buttons |= (curent_btn_1 << 0);
-    curent_buttons |= (curent_btn_2 << 1);
-    curent_buttons |= (curent_ls_sw << 2);
-    curent_buttons |= (curent_rs_sw << 3);
-
-    //write data to struct
-    current_gamepad_data.ls_x = curent_ls_x;
-    current_gamepad_data.ls_y = curent_ls_y;
-    current_gamepad_data.rs_x = curent_rs_x;
-    current_gamepad_data.rs_y = curent_rs_y;
-    current_gamepad_data.buttons = curent_buttons;
-
-    return;
+    return current_gamepad_data;
     
 }
 

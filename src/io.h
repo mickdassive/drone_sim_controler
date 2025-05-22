@@ -91,6 +91,6 @@ extern struct controler_data current_gamepad_data;
 
 //function prototypes
 void io_gpio_init();
-void io_read_gamepad_data();
+struct controler_data io_read_gamepad_data();
 
 #endif // io_h
